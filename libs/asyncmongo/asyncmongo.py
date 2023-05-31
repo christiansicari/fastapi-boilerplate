@@ -9,7 +9,7 @@ class AsyncMongo:
         self.uri = uri
         self.db = db
         self.client = AsyncIOMotorClient(self.uri, server_api=ServerApi('1'))
-        asyncio.run(self.ping_server())
+        #asyncio.run(self.ping_server())
 
     async def ping_server(self):
         client = AsyncIOMotorClient(self.uri, server_api=ServerApi('1'))
@@ -30,9 +30,22 @@ class AsyncMongo:
         except Exception as e:
             print(e)
 
-    async def find_all(self, collection: str, match: dict):
+    async def find_all(self, collection: str, match: dict) -> list[dict]:
+        """
+        finds documents that matche the filter
+        :param collection: collection to match
+        :type collection: str
+        :param match: document filter
+        :type match: str
+        :return: list of matched documents
+        :rtype: list[dict]
+        """
         cursor = self.client[self.db][collection].find(match)
         return [doc for doc in await cursor.to_list(length=100)]
 
     async def aggregate(self, collection: str, pipeline: list):
         return [doc async for doc in self.client[self.db][collection].aggregate(pipeline)]
+
+
+    def foo(self):
+        return self.uri

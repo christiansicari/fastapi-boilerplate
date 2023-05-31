@@ -1,11 +1,12 @@
 import time
-from os.path import realpath
+from os.path import realpath, join
 from pathlib import Path
 import uvicorn
 from fastapi import FastAPI, Request, Response, status
 from vyper import v as config
 from bson.objectid import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 import pydantic
 from libs import utils
 from libs import asyncmongo
@@ -13,7 +14,7 @@ from libs import sqldb
 from libs.sqldb import models as sqlmodels
 
 __here__ = str(Path(realpath(__file__)).parents[0])
-utils.read_config(config, f="config.json")
+utils.read_config(config, f=join(__here__, "config.json"))
 nosqldb = asyncmongo.AsyncMongo(config.get("mongo"), config.get("nosqldb"))
 sql = sqldb.DB(config.get("sqldb"), sqlmodels)
 sqldb = sql.session
@@ -41,9 +42,9 @@ app.add_middleware(
 )
 
 
-@app.post("/dosomething", status_code=200)
+@app.get("/dosomething", status_code=200, response_class=PlainTextResponse)
 def root() -> str:
-    return "Hellooo"
+    return "Hello"
 
 
 @app.get("/nosql/users/{usrid}", status_code=200)
