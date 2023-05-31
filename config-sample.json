@@ -1,0 +1,7 @@
+{
+    "listeningHost": "0.0.0.0",
+    "listeningPort": 8080,
+    "mongo": "mongodb://user:pass@mongo/?authSource=admin",
+    "nosqldb": "sometests",
+    "sqldb": "sqlite:///./sql_app.db"
+}
