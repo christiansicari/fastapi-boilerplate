@@ -6,12 +6,23 @@ from typing import Any
 
 class AsyncMongo:
     def __init__(self, uri: str, db: str):
+        """
+        Manages a MongoDB instance using async calls
+        :param uri: mongodb uri in format mongo://user:pass@address/more
+        :type uri: str
+        :param db: name of database to use
+        :type db: str
+        """
         self.uri = uri
         self.db = db
         self.client = AsyncIOMotorClient(self.uri, server_api=ServerApi('1'))
         #asyncio.run(self.ping_server())
 
     async def ping_server(self):
+        """
+        test connection using ping
+        :return:
+        """
         client = AsyncIOMotorClient(self.uri, server_api=ServerApi('1'))
         # Replace the placeholder with your Atlas connection string
         # Send a ping to confirm a successful connection
@@ -23,6 +34,14 @@ class AsyncMongo:
             exit(1)
 
     async def insert(self, collection: str, document: dict) -> Any:
+        """
+        insert document in collection
+        :param collection: collection where to store
+        :type collection: str
+        :param document: document to store
+        :type document: str
+        :return:
+        """
         try:
             client = AsyncIOMotorClient(self.uri, server_api=ServerApi('1'))
             result = await client[self.db][collection].insert_one(document)
@@ -43,7 +62,16 @@ class AsyncMongo:
         cursor = self.client[self.db][collection].find(match)
         return [doc for doc in await cursor.to_list(length=100)]
 
-    async def aggregate(self, collection: str, pipeline: list):
+    async def aggregate(self, collection: str, pipeline: list[dict]) -> list[dict]:
+        """
+        Apply aggregate query on collection using pipeline
+        :param collection: collection to query
+        :type collection: str
+        :param pipeline: pipeline to apply
+        :type pipeline: list[dict]
+        :return: query result
+        :rtype: list[dict]
+        """
         return [doc async for doc in self.client[self.db][collection].aggregate(pipeline)]
 
 
